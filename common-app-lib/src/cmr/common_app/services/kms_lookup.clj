@@ -37,7 +37,8 @@
    :iso-topic-categories [:iso-topic-category]
    :granule-data-format [:format]
    :mime-type [:mime-type]
-   :related-urls [:url-content-type :type :subtype]})
+   :related-urls [:url-content-type :type :subtype]
+   :processing-levels [:processing-level]})
 
 (def kms-scheme->fields-for-umm-var-lookup
   "Maps the KMS keyword scheme to the list of fields that should be matched when comparing fields
@@ -145,12 +146,6 @@
             :umm-c-index umm-c-lookup-map
             :locations-index location-lookup-map
             :measurement-index measurement-lookup-map})))
-
-(defn deflate
-  "Takes a KMS index and returns a minimal version to store more efficiently and in a way that
-  the index can be recreated in a way to reduce the memory usage."
-  [kms-index]
-  (dissoc kms-index :short-name-index :umm-c-index :locations-index :measurement-index))
 
 (defn lookup-by-short-name
   "Takes a kms-index, the keyword scheme, and a short name and returns the full KMS hierarchy for

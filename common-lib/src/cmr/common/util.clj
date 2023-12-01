@@ -997,9 +997,8 @@
 
 (defn is-jwt-token?
   "Check if a token matches the JWT pattern (Base64.Base64.Base64) and if it
-   does, try to look inside the header section and verify that the token is JWT
-   and it came from EarthDataLogin (EDL). Tokens may start with Bearer and end
-   with with a client-id section.
+   does, try to look inside the header section and verify that the token is JWT.
+   Tokens may start with Bearer and end with with a client-id section.
    Note: Similar code exists at gov.nasa.echo.kernel.service.authentication."
   [raw-token]
   (let [BEARER "Bearer "
@@ -1018,8 +1017,8 @@
                  (string/ends-with? header-raw "}"))
           (try
             (if-let [header-data (json/parse-string header-raw true)]
-              (and (= "JWT" (:typ header-data))
-                   (= "Earthdata Login" (:origin header-data)))
+              (and (contains? header-data :kid)
+                   (contains? header-data :alg))
               false)
             (catch com.fasterxml.jackson.core.JsonParseException e false))
           false))
@@ -1130,3 +1129,10 @@
   [anything]
   (println anything)
   anything)
+
+(defn first-or-throw
+  "Take the first element of a supplied list, throw an exception if it fails"
+  [l]
+  (cond
+    (empty? l) (throw (ex-info "Can't take first of empty list" {:cause :empty-list}))
+    :else (first l)))
